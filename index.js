@@ -332,6 +332,11 @@ app.post("/session-id/clear", requireJWT, (_req, res) => {
   res.json({ ok: true });
 });
 
+// Health check — Railway / uptime monitors
+app.get("/health", (_req, res) => {
+  res.status(200).json({ status: "OK", message: "Server is healthy" });
+});
+
 // Google OAuth
 app.use("/auth",     authRouter);
 app.use("/api-keys", apiKeysRouter);
