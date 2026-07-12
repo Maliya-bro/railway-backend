@@ -1,7 +1,8 @@
 [build]
-builder = "nixpacks"
+builder = "railpack"
+buildCommand = "npm install"
 
 [deploy]
-startCommand = "npm install --omit=dev && node index.js"
+startCommand = "npm start"
 healthcheckPath = "/health"
-restartPolicyType = "on-failure"
+restartPolicyType = "ON_FAILURE"
