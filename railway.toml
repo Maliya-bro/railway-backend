@@ -1,17 +1,8 @@
 [build]
-builder = "NIXPACKS"
-buildCommand = "npm install"
-buildEnvironment = "V3"
-nixpacksConfigPath = "/nixpacks.toml"
+builder          = "NIXPACKS"
+buildCommand     = "npm install"
 
 [deploy]
-runtime = "V2"
-numReplicas = 1
-startCommand = "npm start"
-healthcheckPath = "/health"
-sleepApplication = false
-useLegacyStacker = false
-ipv6EgressEnabled = false
-multiRegionConfig = {"sfo":{"numReplicas":1}}
+startCommand     = "npm start"
+healthcheckPath  = "/health"
 restartPolicyType = "ON_FAILURE"
-restartPolicyMaxRetries = 10
