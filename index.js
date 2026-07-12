@@ -1,6 +1,6 @@
 // ⚠️  security.js MUST be the first import — it blocks child_process
 //     and deletes sensitive env vars before any other module can read them.
-import { getUnbanCode, redactSensitive, getSessionSecret } from "./security.js";
+import { getUnbanCode, redactSensitive, getSessionSecret, getFrontendUrl } from "./security.js";
 
 import express    from "express";
 import helmet     from "helmet";
