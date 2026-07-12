@@ -1,8 +1,0 @@
-[phases.setup]
-nixPkgs = ["nodejs_20"]
-
-[phases.install]
-cmds = ["npm install"]   # full install — never --production/--omit=dev
-
-[start]
-cmd = "npm start"
