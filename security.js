@@ -1,12 +1,9 @@
 // ═══════════════════════════════════════════════════════════════════
-//  security-railway.js — Railway deployment සඳහා පමණි
-//
-//  - child_process blocking නෑ (Railway internal network needs it)
-//  - env var deletion නෑ (Railway env vars Railway itself manage කරයි)
-//  - Accessor functions පමණයි — same API as security.js
+//  security.js — MUST be the FIRST import in index.js
 // ═══════════════════════════════════════════════════════════════════
 
 // ─── Accessor functions — process.env කෙලින්ම කියවයි ───────────────
+// Railway internal network එකට බාධා නොවන පරිදි env vars මකන්නේ නැත.
 export function getMongoUri()          { return process.env.MONGODB_URI          || ""; }
 export function getUnbanCode()         { return process.env.UNBAN_CODE           || ""; }
 export function getAdminPw()           { return process.env.ADMIN_PW             || ""; }
@@ -45,4 +42,4 @@ console.error = (...args) => {
   _origError(...sanitized);
 };
 
-console.log("🔒 Railway security active: env vars protected (no deletion, no child_process block).");
+console.log("🔒 Security active: env vars protected (no deletion, no child_process block).");
