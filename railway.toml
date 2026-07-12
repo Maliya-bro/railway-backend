@@ -1,8 +1,8 @@
 [build]
-builder          = "railpack"
-buildCommand     = "npm install"
+builder = "railpack"
+buildCommand = "npm install"
 
 [deploy]
-startCommand     = "npm start"
-healthcheckPath  = "/health"
-restartPolicyType = "ON_FAILURE"
+startCommand = "npm start"
+healthcheckPath = "/health"
+restartPolicyType = "on-failure"
