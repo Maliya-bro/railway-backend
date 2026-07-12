@@ -1,0 +1,176 @@
+================================================================
+  MALIYA-MD — Security NPM Packages Guide
+  ---------------------------------------------------------------
+   මෙය app එකේ security සඳහා use කරන npm packages ලැයිස්තුව.
+================================================================
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+1. helmet
+   npm install helmet
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+කරන දේ:
+  HTTP response headers secure කරනවා. Browser attacks
+  (XSS, clickjacking, MIME sniffing, etc.) block කරන්න
+  automatically headers set කරනවා.
+
+Set කරන headers:
+  • Content-Security-Policy    → XSS attacks block කරනවා
+  • X-Frame-Options            → Clickjacking (iframe embed) block කරනවා
+  • X-Content-Type-Options     → MIME type sniffing block කරනවා
+  • Strict-Transport-Security  → HTTPS enforce කරනවා
+  • X-DNS-Prefetch-Control     → DNS leak block කරනවා
+  • Referrer-Policy            → Referrer info limit කරනවා
+  • Permissions-Policy         → Camera/mic/location access block කරනවා
+
+ආරක්ෂා කරන attack types:
+  ✅ Cross-Site Scripting (XSS)
+  ✅ Clickjacking
+  ✅ MIME Sniffing
+  ✅ Protocol Downgrade (HTTP → HTTPS forced)
+
+usage:
+  import helmet from "helmet";
+  app.use(helmet());
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2. express-rate-limit  (දැනටමත් installed & active)
+   npm install express-rate-limit
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+කරන දේ:
+  IP address එකෙන් server endpoints වලට කරන requests
+  සීමා කරනවා. Brute-force හා spam attacks block කරනවා.
+
+MALIYA-MD config:
+  • /pair සහ /qr → IP එකකට 10 requests per 24 hours
+  • 429 Too Many Requests → ban wall UI show කරනවා
+  • unbanned IPs → fresh rate-limit bucket ලබා ගන්නවා
+
+ආරක්ෂා කරන attack types:
+  ✅ Brute-force attacks
+  ✅ Denial of Service (DoS) — partial
+  ✅ API spam / scraping
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+3. cors
+   npm install cors
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+කරන දේ:
+  Cross-Origin Resource Sharing (CORS) configure කරනවා.
+  වෙනත් domains/websites වලින් API call කිරීම block කරනවා.
+  *.replit.app සහ *.repl.co domains ට permit කරනවා.
+
+MALIYA-MD config:
+  • Allowed origins: same-origin + *.replit.app + *.repl.co
+  • Allowed methods: GET, POST
+  • Allowed headers: Content-Type, Authorization
+
+ආරක්ෂා කරන attack types:
+  ✅ Cross-Site ReqAuest Forgery (CSRF) — partial
+  ✅ Unauthorized cross-origin API access
+  ✅ Hotlinking / API theft from other sites
+
+usage:
+  import cors from "cors";
+  app.use(cors({ origin: allowedOrigins }));
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+4. express-mongo-sanitize  (custom middleware ගෙන් replace කළා)
+   npm install express-mongo-sanitize
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+කරන දේ:
+  MongoDB operator injection attacks block කරනවා.
+  Request body/params/query වල "$" සහ "." ඇති keys strip කරනවා.
+
+⚠️ NOTE: express-mongo-sanitize Express 5 සමඟ incompatible.
+   (req.query read-only error). ඒ නිසා MALIYA-MD app එකේ
+   custom sanitizeMongo() function use කරනවා — same protection.
+
+block කරන attack examples:
+  { "$gt": "" }       → MongoDB bypass attempt
+  { "$where": "..." } → JavaScript injection to MongoDB
+  { "a.b": "val" }    → Dot notation injection
+
+ආරක්ෂා කරන attack types:
+  ✅ NoSQL Injection
+  ✅ MongoDB Operator Injection
+  ✅ Authentication bypass via MongoDB operators
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+5. zod
+   npm install zod
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+කරන දේ:
+  TypeScript-first schema validation library. User inputs
+  server-side validate කරනවා — wrong/malicious data
+  MongoDB වෙත ළඟා වෙන්නත් කලින් reject කරනවා.
+
+MALIYA-MD config:
+  • /pair endpoint → phone number schema validate කරනවා
+    - digits only (0-9)
+    - 7–15 characters
+    - string type enforce
+
+attack example blocked:
+  number = "'; DROP TABLE users; --"  → Rejected by zod schema
+  number = { "$gt": "" }              → Rejected (not a string)
+  number = ""                         → Rejected (too short)
+
+ආරක්ෂා කරන attack types:
+  ✅ SQL/NoSQL injection via malformed input
+  ✅ Type confusion attacks
+  ✅ Invalid data reaching the database
+
+usage:
+  import { z } from "zod";
+  const schema = z.object({ number: z.string().regex(/^[0-9]{7,15}$/) });
+  schema.parse(req.query);
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+6. jsonwebtoken (JWT)
+   npm install jsonwebtoken
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+කරන දේ:
+  JSON Web Tokens create/verify කරනවා. Admin-only
+  endpoints (session clear) unauthorized access වලින්
+  ආරක්ෂා කරනවා.
+
+MALIYA-MD config:
+  • POST /admin/token → UNBAN_CODE verify කළොත් JWT issue
+  • POST /session-id/clear → valid JWT required (Authorization header)
+  • Token expires: 1 hour
+  • Secret: process.env.UNBAN_CODE (Replit Secret)
+
+attack example blocked:
+  curl -X POST /session-id/clear  → 401 Unauthorized (no token)
+  curl -X POST /session-id/clear  → 403 Forbidden (invalid/expired token)
+
+ආරක්ෂා කරන attack types:
+  ✅ Unauthorized database clear attacks
+  ✅ Session hijacking
+  ✅ Admin endpoint abuse
+  ✅ Replay attacks (token expiry)
+
+usage:
+  import jwt from "jsonwebtoken";
+  const token = jwt.sign({ role: "admin" }, SECRET, { expiresIn: "1h" });
+  jwt.verify(token, SECRET); // throws if invalid
+
+================================================================
+  SECURITY LAYERS SUMMARY
+================================================================
+
+Layer 1 — HTTP Headers       : helmet
+Layer 2 — Rate Limiting      : express-rate-limit
+Layer 3 — CORS Protection    : cors
+Layer 4 — NoSQL Sanitization : custom sanitizeMongo() middleware
+Layer 5 — Input Validation   : zod (schema-level)
+Layer 6 — Auth Tokens        : jsonwebtoken (JWT)
+
+================================================================
+  ENVIRONMENT SECRETS (Replit Secrets panel හරහා set කරන්න)
+================================================================
+
+MONGODB_URI   = MongoDB Atlas connection string
+UNBAN_CODE    = Admin unban + JWT signing secret
+
+================================================================

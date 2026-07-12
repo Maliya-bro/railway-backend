@@ -1,0 +1,47 @@
+{
+  "name": "MALIYA-MD",
+  "version": "1.0.0",
+  "description": "MALIYA-MD - WhatsApp Pair Code Generator",
+  "main": "index.js",
+  "type": "module",
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "scripts": {
+    "start": "node index.js",
+    "build": "echo 'No build step required'"
+  },
+  "author": "MMT",
+  "license": "ISC",
+  "dependencies": {
+    "@distube/ytdl-core": "^4.16.12",
+    "@whiskeysockets/baileys": "7.0.0-rc13",
+    "awesome-phonenumber": "7.8.0",
+    "axios": "^1.18.1",
+    "bcryptjs": "^3.0.3",
+    "body-parser": "2.2.2",
+    "cookie-parser": "^1.4.7",
+    "cors": "2.8.5",
+    "express": "5.2.1",
+    "express-mongo-sanitize": "2.2.0",
+    "express-rate-limit": "8.5.2",
+    "express-session": "^1.19.0",
+    "helmet": "8.0.0",
+    "hpp": "^0.2.3",
+    "jsonwebtoken": "9.0.2",
+    "mongodb": "6.15.0",
+    "passport": "^0.7.0",
+    "passport-google-oauth20": "^2.0.0",
+    "path": "0.12.7",
+    "phone": "3.1.71",
+    "pino": "9.6.0",
+    "play-dl": "^1.9.7",
+    "qrcode": "1.5.4",
+    "qrcode-terminal": "0.12.0",
+    "sadaslk-dlcore": "^1.0.0",
+    "winston": "^3.19.0",
+    "youtubei.js": "^17.2.0",
+    "ytsr": "^3.8.4",
+    "zod": "3.25.76"
+  }
+}

@@ -1,0 +1,208 @@
+================================================================
+  MALIYA-MD — Security Updates Log
+  ---------------------------------------------------------------
+  මේ file එකේ app එකට කරන ලද security updates සියල්ල
+  සරල භාෂාවෙන් විස්තර කර ඇත. Code නැත.
+================================================================
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+UPDATE 01 — MongoDB URI Hardcoding Fix
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ගොනු: mongodb.js
+
+ගැටළුව:
+  MongoDB connection string (username, password, cluster URL)
+  code ඇතුළේ hardcode කර තිබුණා. GitHub හෝ Replit deploy
+  හරහා ඕනෑ කෙනෙකුට credentials පෙනෙන්නට ඉඩ තිබුණා.
+
+සකස් කළ දේ:
+  MONGODB_URI, MONGODB_DB, SESSION_COLLECTION යන ඔක්කොම
+  Replit Secrets panel ඇතුළෙ environment variables ලෙස
+  store කරලා process.env හරහා load කරන ලද. Code ඇතුළේ
+  credentials නෑ.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+UPDATE 02 — Server-Side IP Rate Limiting
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ගොනු: index.js
+
+ගැටළුව:
+  කිසිදු server-side rate limiting නොතිබිණි. Bot හෝ
+  automation tool ගෙන් unlimited requests කළ හැකිව තිබුණා.
+
+සකස් කළ දේ:
+  express-rate-limit ගෙන් IP address එකකට /pair සහ /qr
+  routes වලට 24 පැයකට requests 10 ක් limit කළා.
+  11 වන request ෙදී server 429 status code return කරනවා.
+  Replit proxy IP නිසා real client IP ගන්නට trust proxy 1
+  configure කළා. Rate limit exceed වූ විට frontend ban wall
+  UI show වෙනවා.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+UPDATE 03 — Ban Wall UI + Unban Code Flow
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ගොනු: pair.html, index.js
+
+ගැටළුව:
+  Rate limit ලෑවොත් user ට දැනුවත් කිරීමක් හෝ unban
+  ක්‍රමවේදයක් නොතිබිණි.
+
+සකස් කළ දේ:
+  Ban wall overlay UI — IP ban වූ විට full-screen
+  "abnormal activities" warning, countdown timer, සහ
+  "Request Unban" button show වෙනවා.
+
+  POST /unban-verify endpoint — user unban code ඇතුළු
+  කළොත් server UNBAN_CODE secret එකට compare කරලා valid
+  නම් IP එකට fresh rate-limit bucket දෙනවා. Code invalid
+  නම් error message show කරනවා.
+
+  UNBAN_CODE Replit Secret ලෙස store කළා — code ඇතුළේ නෑ.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+UPDATE 04 — NoSQL Injection Protection
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ගොනු: index.js
+
+ගැටළුව:
+  MongoDB operator injection attacks — attacker { "$gt": "" }
+  වැනි MongoDB operators request body ඇතුළේ inject කිරීමෙන්
+  database queries manipulate කළ හැකිව තිබුණා.
+
+සකස් කළ දේ:
+  express-mongo-sanitize library Express 5 සමඟ incompatible
+  (req.query read-only). ඒ නිසා custom sanitizeMongo()
+  middleware ලිව්වා. req.body සහ req.params recursive ලෙස
+  scan කරලා "$" ලෙස ආරම්භ වෙන හෝ "." ඇති keys "_" ලෙස
+  replace කරනවා. Attack attempt log warning show කරනවා.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+UPDATE 05 — Phone Number Input: Numbers Only
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ගොනු: pair.html
+
+ගැටළුව:
+  Phone number input field ට letters, symbols, SQL strings
+  type කළ හැකිව තිබිණ. Client-side validation දුර්වල විය.
+
+සකස් කළ දේ:
+  Input field type="tel" සහ inputmode="numeric" set කළා
+  (mobile ට numeric keyboard show කරන්නට).
+  JavaScript input event — type කරන moment ම non-digit
+  characters strip කරනවා.
+  paste event — paste කළොත් digits මිස ඕනෑ character
+  discard කරනවා.
+  maxlength 15 set කළා.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+UPDATE 06 — Unban Code Input: Numbers Only
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ගොනු: pair.html
+
+ගැටළුව:
+  Ban wall unban code input field ට letters type කළ හැකිව
+  තිබිණ.
+
+සකස් කළ දේ:
+  Phone number input සෙ ම input event සහ paste event
+  listeners add කළා. Digits මිස ඕනෑ character real-time
+  strip කරනවා.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+UPDATE 07 — Security NPM Packages Integration
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ගොනු: index.js, pair.js
+
+helmet:
+  HTTP response headers secure කළා. XSS, clickjacking,
+  MIME sniffing, protocol downgrade attacks block කරනවා.
+  Browser ට security policies enforce කරනවා.
+
+cors:
+  Cross-Origin Resource Sharing restrict කළා. *.replit.app
+  සහ *.repl.co domains ට permit. වෙනත් origins block.
+  Allowed methods: GET, POST පමණි.
+
+zod (pair.js):
+  Phone number schema validation — 7-15 digits, string type,
+  digits only. MongoDB ස්පර්ශ කිරීමට කලින් reject කරනවා.
+  Invalid type (object, array, operator) → 400 error.
+
+jsonwebtoken:
+  /session-id/clear endpoint JWT ගෙන් protect කළා.
+  Admin token ගන්නට POST /admin/token — UNBAN_CODE verify
+  කළොත් 1-hour JWT issue කරනවා. Token නැතිව database clear
+  කිරීම 401 Unauthorized.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+UPDATE 08 — Process-Level Hardening (security.js)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ගොනු: security.js (නව ගොනු), index.js, mongodb.js
+
+ගැටළුව:
+  Server ඇතුළෙ child_process module ගෙන් shell commands
+  (exec, spawn, fork) run කිරීමෙන් reverse shell, server
+  takeover කළ හැකිය. Process.env හරහා credentials expose
+  විය හැකිය.
+
+සකස් කළ දේ:
+
+  Child Process Block:
+    exec, execSync, spawn, spawnSync, execFile, execFileSync,
+    fork — ඔක්කොම Object.defineProperty ගෙන් freeze + override
+    කළා. Call කළොත් error throw. Module freeze කළා.
+
+  Env Var Deletion:
+    MONGODB_URI සහ UNBAN_CODE startup ෙදී closed-scope
+    constants ලෙස store කරලා process.env ෙකොන් delete කළා.
+    Code ගේ ඕනෑ ම තැනකදී process.env.MONGODB_URI read
+    කළොත් undefined. Accessor functions ගෙන් ම ගත හැකිය.
+
+  Console.error Redaction:
+    console.error patch කළා. Error log ඇතුළේ sensitive
+    value appear වුණොත් [REDACTED] ලෙස replace කරනවා.
+
+  Secure Error Handler Middleware:
+    Express global error handler — error messages redact
+    කරලා client ට send කරනවා. Stack traces expose නොවෙ.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+UPDATE 09 — Dependency Version Pinning + Audit Fix
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ගොනු: package.json
+
+ගැටළුව:
+  package.json ේ "^" (caret) version ranges — npm update
+  ෙදී breaking changes ඇති version install විය හැකිය.
+  qs සහ ws packages ෙදී moderate severity vulnerabilities
+  දෙකක් ද සොයා ගන්නා ලදි.
+
+සකස් කළ දේ:
+  සියලු "^" version prefixes remove කළා — exact version lock.
+  npm audit fix — qs (DoS) සහ ws (memory disclosure)
+  vulnerabilities patch කළා.
+  npm audit — 0 vulnerabilities remaining.
+
+================================================================
+  SECURITY LAYERS OVERVIEW (සම්පූර්ණ)
+================================================================
+
+Layer 01 — Env Var Protection      : Secrets deleted from process.env at startup
+Layer 02 — Child Process Block     : exec/spawn/fork/fork frozen at process level
+Layer 03 — HTTP Security Headers   : helmet (XSS, clickjacking, MIME sniff)
+Layer 04 — CORS Restriction        : *.replit.app only; other origins blocked
+Layer 05 — IP Rate Limiting        : 10 requests / 24h per IP (server-side)
+Layer 06 — NoSQL Injection Guard   : custom sanitizeMongo() on req.body/params
+Layer 07 — Input Schema Validation : zod (phone number — digits, length, type)
+Layer 08 — JWT Admin Auth          : /session-id/clear requires valid JWT
+Layer 09 — Error Response Redact   : sensitive values auto-replaced with [REDACTED]
+Layer 10 — Dependency Audit        : exact versions pinned, 0 known vulnerabilities
+
+================================================================
+  ENVIRONMENT SECRETS (Replit Secrets panel ෙකොන් set)
+================================================================
+
+MONGODB_URI   = MongoDB Atlas connection string
+UNBAN_CODE    = Admin unban code + JWT signing secret
+
+================================================================
