@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>API Keys — MALIYA-MD</title>
+  <link rel="icon" href="/favicon.ico" type="image/x-icon">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:     #050d1a;
+      --card:   rgba(0,20,50,0.75);
+      --border: rgba(0,180,255,0.15);
+      --accent: #00b4ff;
+      --green:  #1db954;
+      --red:    #e52d27;
+      --text:   #e8f4ff;
+      --sub:    rgba(255,255,255,0.45);
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      min-height: 100vh;
+      background-image:
+        radial-gradient(ellipse at 20% 20%, rgba(0,100,200,0.08) 0%, transparent 60%),
+        radial-gradient(ellipse at 80% 80%, rgba(0,200,180,0.05) 0%, transparent 60%);
+    }
+
+    /* ── NAV ── */
+    .nav {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 32px; height: 62px;
+      background: rgba(5,13,26,0.95);
+      border-bottom: 1px solid var(--border);
+      backdrop-filter: blur(12px);
+      position: sticky; top: 0; z-index: 100;
+    }
+    .nav-logo {
+      font-size: 20px; font-weight: 900; letter-spacing: 1px;
+      text-decoration: none; color: #fff;
+    }
+    .nav-logo span { color: var(--accent); }
+    .nav-back {
+      display: flex; align-items: center; gap: 7px;
+      padding: 8px 18px; border-radius: 10px;
+      background: rgba(0,180,255,0.08); border: 1px solid var(--border);
+      color: var(--accent); text-decoration: none; font-size: 13px; font-weight: 700;
+      transition: background .2s;
+    }
+    .nav-back:hover { background: rgba(0,180,255,0.18); }
+
+    /* ── MAIN ── */
+    .main { max-width: 860px; margin: 0 auto; padding: 40px 20px 80px; }
+
+    /* ── PAGE HEADER ── */
+    .page-header { margin-bottom: 36px; }
+    .page-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 5px 14px; border-radius: 20px;
+      background: rgba(0,255,213,0.08); border: 1px solid rgba(0,255,213,0.2);
+      color: #00ffd5; font-size: 12px; font-weight: 800; letter-spacing: 1.5px;
+      text-transform: uppercase; margin-bottom: 14px;
+    }
+    .page-title { font-size: 32px; font-weight: 900; margin-bottom: 8px; }
+    .page-title span { color: var(--accent); }
+    .page-sub { color: var(--sub); font-size: 15px; line-height: 1.6; }
+
+    /* ── CARD ── */
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 28px;
+      margin-bottom: 24px;
+      backdrop-filter: blur(10px);
+    }
+    .card-title {
+      font-size: 16px; font-weight: 900; margin-bottom: 6px;
+      display: flex; align-items: center; gap: 9px;
+    }
+    .card-title i { color: var(--accent); font-size: 15px; }
+    .card-sub { color: var(--sub); font-size: 13px; margin-bottom: 20px; }
+
+    /* ── LOGIN GATE ── */
+    #loginGate {
+      text-align: center; padding: 60px 20px;
+    }
+    #loginGate .icon { font-size: 52px; color: var(--accent); margin-bottom: 20px; }
+    #loginGate h2 { font-size: 24px; font-weight: 900; margin-bottom: 10px; }
+    #loginGate p { color: var(--sub); font-size: 14px; margin-bottom: 28px; }
+    .btn-google {
+      display: inline-flex; align-items: center; gap: 10px;
+      padding: 14px 28px; border-radius: 12px;
+      background: #fff; color: #1a1a1a;
+      font-weight: 900; font-size: 14px; text-decoration: none;
+      transition: transform .2s, box-shadow .2s;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    }
+    .btn-google:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(0,0,0,0.4); }
+
+    /* ── CONTENT ── */
+    #content { display: none; }
+
+    /* ── USER BAR ── */
+    .user-bar {
+      display: flex; align-items: center; gap: 14px;
+      padding: 16px 22px; border-radius: 14px;
+      background: rgba(0,180,255,0.06);
+      border: 1px solid var(--border);
+      margin-bottom: 28px;
+    }
+    .user-avatar {
+      width: 42px; height: 42px; border-radius: 50%;
+      object-fit: cover; border: 2px solid var(--accent);
+    }
+    .user-avatar-placeholder {
+      width: 42px; height: 42px; border-radius: 50%;
+      background: var(--accent); display: flex; align-items: center;
+      justify-content: center; font-weight: 900; font-size: 16px; color: #050d1a;
+      flex-shrink: 0;
+    }
+    .user-name { font-weight: 900; font-size: 15px; }
+    .user-email { font-size: 12px; color: var(--sub); }
+    .user-bar-right { margin-left: auto; }
+
+    /* ── KEY LIST ── */
+    #keyList { display: flex; flex-direction: column; gap: 12px; }
+    .key-item {
+      background: rgba(0,0,0,0.3); border: 1px solid var(--border);
+      border-radius: 12px; padding: 16px 18px;
+      display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+    }
+    .key-item:hover { border-color: rgba(0,180,255,0.3); }
+    .key-label { font-weight: 800; font-size: 14px; margin-bottom: 3px; }
+    .key-value {
+      font-family: 'Courier New', monospace; font-size: 12px;
+      color: #00ffd5; letter-spacing: 0.5px;
+      background: rgba(0,255,213,0.07); padding: 4px 10px;
+      border-radius: 6px; cursor: pointer; word-break: break-all;
+    }
+    .key-value:hover { background: rgba(0,255,213,0.14); }
+    .key-meta { font-size: 11px; color: var(--sub); margin-top: 4px; }
+    .key-actions { display: flex; gap: 8px; margin-left: auto; flex-shrink: 0; }
+    .btn-copy {
+      padding: 7px 14px; border-radius: 8px; border: none; cursor: pointer;
+      background: rgba(0,180,255,0.12); color: var(--accent);
+      font-size: 12px; font-weight: 700; transition: background .2s;
+    }
+    .btn-copy:hover { background: rgba(0,180,255,0.25); }
+    .btn-revoke {
+      padding: 7px 14px; border-radius: 8px; border: none; cursor: pointer;
+      background: rgba(229,45,39,0.12); color: #ff7070;
+      font-size: 12px; font-weight: 700; transition: background .2s;
+    }
+    .btn-revoke:hover { background: rgba(229,45,39,0.25); }
+
+    /* ── CREATE FORM ── */
+    .create-row { display: flex; gap: 10px; }
+    .input-field {
+      flex: 1; padding: 12px 16px; border-radius: 11px;
+      border: 1.5px solid var(--border); background: rgba(0,20,50,0.8);
+      color: #fff; font-size: 14px; outline: none;
+      transition: border-color .2s;
+    }
+    .input-field:focus { border-color: rgba(0,180,255,0.6); }
+    .btn-create {
+      padding: 12px 22px; border-radius: 11px; border: none; cursor: pointer;
+      background: linear-gradient(135deg, #00ffd5, #00b4ff);
+      color: #050d1a; font-weight: 900; font-size: 14px;
+      white-space: nowrap; transition: opacity .2s;
+    }
+    .btn-create:hover { opacity: 0.85; }
+    .btn-create:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    /* ── NEW KEY REVEAL ── */
+    #newKeyReveal {
+      display: none; margin-top: 16px; padding: 16px 18px;
+      border-radius: 12px; background: rgba(0,255,213,0.06);
+      border: 1px solid rgba(0,255,213,0.25);
+    }
+    #newKeyReveal .reveal-label {
+      font-size: 12px; color: #00ffd5; font-weight: 800;
+      margin-bottom: 8px; display: flex; align-items: center; gap: 6px;
+    }
+    #newKeyReveal .reveal-key {
+      font-family: 'Courier New', monospace; font-size: 13px;
+      color: #fff; background: rgba(0,0,0,0.4); padding: 10px 14px;
+      border-radius: 8px; word-break: break-all; cursor: pointer;
+      letter-spacing: 0.5px;
+    }
+    #newKeyReveal .reveal-warn {
+      font-size: 11px; color: rgba(255,200,100,0.8); margin-top: 8px;
+    }
+
+    /* ── API DOCS ── */
+    .code-block {
+      background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 10px; padding: 16px; font-family: 'Courier New', monospace;
+      font-size: 12px; color: #b0d4ff; overflow-x: auto;
+      position: relative; line-height: 1.7;
+    }
+    .code-lang {
+      font-size: 10px; font-weight: 800; text-transform: uppercase;
+      color: rgba(255,255,255,0.3); letter-spacing: 1px;
+      margin-bottom: 8px;
+    }
+    .copy-code-btn {
+      position: absolute; top: 10px; right: 10px;
+      padding: 5px 11px; border-radius: 7px; border: none; cursor: pointer;
+      background: rgba(0,180,255,0.15); color: var(--accent);
+      font-size: 11px; font-weight: 700; transition: background .2s;
+    }
+    .copy-code-btn:hover { background: rgba(0,180,255,0.3); }
+
+    .tabs { display: flex; gap: 6px; margin-bottom: 14px; flex-wrap: wrap; }
+    .tab-btn {
+      padding: 7px 16px; border-radius: 8px; border: 1px solid var(--border);
+      background: transparent; color: var(--sub); font-size: 12px; font-weight: 700;
+      cursor: pointer; transition: all .2s;
+    }
+    .tab-btn.active {
+      background: rgba(0,180,255,0.15); border-color: var(--accent); color: var(--accent);
+    }
+
+    /* ── ALERT ── */
+    .alert {
+      padding: 10px 14px; border-radius: 9px; font-size: 13px; margin-bottom: 14px;
+    }
+    .alert-err  { background: rgba(255,60,60,0.12); border: 1px solid rgba(255,80,80,0.3); color: #ff7070; }
+    .alert-ok   { background: rgba(29,185,84,0.12); border: 1px solid rgba(29,185,84,0.3); color: #1db954; }
+
+    /* ── EMPTY ── */
+    .empty-state {
+      text-align: center; padding: 32px; color: var(--sub); font-size: 14px;
+    }
+    .empty-state i { font-size: 36px; opacity: .3; display: block; margin-bottom: 10px; }
+
+    /* ── ENDPOINT TAG ── */
+    .endpoint {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 6px 14px; border-radius: 8px;
+      background: rgba(0,180,255,0.1); border: 1px solid var(--border);
+      font-family: monospace; font-size: 13px; color: var(--accent);
+      margin-bottom: 14px;
+    }
+    .method {
+      background: var(--green); color: #050d1a;
+      padding: 2px 8px; border-radius: 5px;
+      font-size: 11px; font-weight: 900;
+    }
+    .method.post { background: var(--accent); }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 600px) {
+      .main { padding: 24px 14px 60px; }
+      .page-title { font-size: 24px; }
+      .create-row { flex-direction: column; }
+      .key-actions { margin-left: 0; width: 100%; }
+      .nav { padding: 0 16px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <a href="/" class="nav-logo">MALIYA<span>-MD</span></a>
+  <a href="/" class="nav-back"><i class="fa-solid fa-arrow-left"></i> Back to App</a>
+</nav>
+
+<div class="main">
+
+  <!-- LOGIN GATE -->
+  <div id="loginGate">
+    <div class="icon"><i class="fa-solid fa-key"></i></div>
+    <h2>Login Required</h2>
+    <p>API keys generate කරන්න MALIYA-MD account එකෙන් login කරන්න.</p>
+    <a href="/auth/google" class="btn-google">
+      <svg width="18" height="18" viewBox="0 0 48 48">
+        <path fill="#FFC107" d="M43.6 20H24v8h11.3C33.6 33.2 29.3 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3 0 5.7 1.1 7.8 2.9l5.7-5.7C33.8 6.5 29.2 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20c11 0 19.7-8 19.7-20 0-1.3-.1-2.7-.1-4z"/>
+        <path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.6 15.1 18.9 12 24 12c3 0 5.7 1.1 7.8 2.9l5.7-5.7C33.8 6.5 29.2 4 24 4 16.3 4 9.7 8.4 6.3 14.7z"/>
+        <path fill="#4CAF50" d="M24 44c5.2 0 9.9-1.9 13.5-5l-6.2-5.2C29.4 35.5 26.8 36 24 36c-5.2 0-9.6-3-11.3-7.3l-6.5 5C9.7 39.7 16.4 44 24 44z"/>
+        <path fill="#1976D2" d="M43.6 20H24v8h11.3c-.9 2.5-2.6 4.6-4.8 6l6.2 5.2C40.5 35.5 44 30.2 44 24c0-1.3-.1-2.7-.4-4z"/>
+      </svg>
+      Sign in with Google
+    </a>
+    <p style="margin-top:16px;font-size:12px;">
+      හෝ &nbsp;<a href="/" style="color:var(--accent);">MALIYA-MD වෙතින් email/password login</a>
+    </p>
+  </div>
+
+  <!-- MAIN CONTENT (shown after login) -->
+  <div id="content">
+
+    <!-- Page Header -->
+    <div class="page-header">
+      <div class="page-badge"><i class="fa-solid fa-key"></i> DEVELOPER API</div>
+      <h1 class="page-title">API <span>Keys</span></h1>
+      <p class="page-sub">
+        MALIYA-MD AI chat API ඔබේ app / bot / project ට integrate කරන්න.<br>
+        Account एकෙන් login වී API key generate කරලා external endpoints call කරන්න.
+      </p>
+    </div>
+
+    <!-- User Bar -->
+    <div class="user-bar">
+      <div id="userAvatarWrap"></div>
+      <div>
+        <div class="user-name" id="userName"></div>
+        <div class="user-email" id="userEmail"></div>
+      </div>
+      <div class="user-bar-right">
+        <a href="/auth/logout" style="font-size:12px;color:var(--sub);text-decoration:none;">
+          <i class="fa-solid fa-right-from-bracket"></i> Logout
+        </a>
+      </div>
+    </div>
+
+    <!-- Create New Key -->
+    <div class="card">
+      <div class="card-title"><i class="fa-solid fa-plus-circle"></i> New API Key Generate කරන්න</div>
+      <div class="card-sub">Key label දීලා Create click කරන්න. Account එකට max 5 keys.</div>
+
+      <div id="createAlert"></div>
+      <div class="create-row">
+        <input class="input-field" id="keyLabel" type="text"
+          placeholder="Key label (e.g. My WhatsApp Bot)" maxlength="40"
+          onkeydown="if(event.key==='Enter')createKey()">
+        <button class="btn-create" id="createBtn" onclick="createKey()">
+          <i class="fa-solid fa-key"></i> Generate Key
+        </button>
+      </div>
+
+      <!-- New key reveal (once) -->
+      <div id="newKeyReveal">
+        <div class="reveal-label"><i class="fa-solid fa-eye"></i> ඔබේ නව API Key — copy කරලා safe ලෙස save කරන්න!</div>
+        <div class="reveal-key" id="newKeyText" onclick="copyText(this.textContent, this)">
+          MALIYA-MD-...
+        </div>
+        <div class="reveal-warn">
+          ⚠️ මේ key ඔබට only once show වෙනවා. Page reload කළාම නැවත show නොවේ!
+        </div>
+      </div>
+    </div>
+
+    <!-- Keys List -->
+    <div class="card">
+      <div class="card-title"><i class="fa-solid fa-list-ul"></i> ඔබේ API Keys</div>
+      <div class="card-sub">Key value click හෝ Copy button click කරලා copy කරන්න.</div>
+      <div id="keyListAlert"></div>
+      <div id="keyList">
+        <div class="empty-state">
+          <i class="fa-solid fa-key"></i>
+          API keys නැහැ. ඉහළ Generate click කරන්න.
+        </div>
+      </div>
+    </div>
+
+    <!-- API Documentation -->
+    <div class="card">
+      <div class="card-title"><i class="fa-solid fa-book"></i> API Documentation</div>
+      <div class="card-sub">ඔබේ app ට AI chat integrate කරන method.</div>
+
+      <div class="endpoint">
+        <span class="method post">POST</span>
+        <span id="apiEndpoint">/api/chat/v1</span>
+      </div>
+
+      <p style="font-size:13px;color:var(--sub);margin-bottom:16px;">
+        <strong style="color:#fff;">Header:</strong> <code style="color:#00ffd5;">x-api-key: YOUR_API_KEY</code>
+        &nbsp;&nbsp;|&nbsp;&nbsp;
+        <strong style="color:#fff;">Content-Type:</strong> <code style="color:#00ffd5;">application/json</code>
+      </p>
+
+      <div class="tabs" id="docTabs">
+        <button class="tab-btn active" onclick="showTab('js')">JavaScript</button>
+        <button class="tab-btn" onclick="showTab('python')">Python</button>
+        <button class="tab-btn" onclick="showTab('curl')">cURL</button>
+        <button class="tab-btn" onclick="showTab('response')">Response</button>
+      </div>
+
+      <div id="tab-js">
+        <div class="code-lang">JavaScript / Node.js</div>
+        <div class="code-block" id="code-js">
+          <button class="copy-code-btn" onclick="copyCode('code-js')">Copy</button>
+<pre>const res = await fetch("<span class="api-url-placeholder"></span>/api/chat/v1", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+    "x-api-key":    "MALIYA-MD-YOUR_KEY_HERE"
+  },
+  body: JSON.stringify({
+    message:   "Hello! How are you?",
+    sessionId: "user-123"   // optional, keeps conversation memory
+  })
+});
+
+const data = await res.json();
+console.log(data.reply);   // AI reply
+console.log(data.model);   // which AI model answered</pre>
+        </div>
+      </div>
+
+      <div id="tab-python" style="display:none;">
+        <div class="code-lang">Python</div>
+        <div class="code-block" id="code-python">
+          <button class="copy-code-btn" onclick="copyCode('code-python')">Copy</button>
+<pre>import requests
+
+res = requests.post(
+    "<span class="api-url-placeholder"></span>/api/chat/v1",
+    headers={
+        "Content-Type": "application/json",
+        "x-api-key":    "MALIYA-MD-YOUR_KEY_HERE"
+    },
+    json={
+        "message":   "Hello! How are you?",
+        "sessionId": "user-123"
+    }
+)
+
+data = res.json()
+print(data["reply"])   # AI reply
+print(data["model"])   # model used</pre>
+        </div>
+      </div>
+
+      <div id="tab-curl" style="display:none;">
+        <div class="code-lang">cURL</div>
+        <div class="code-block" id="code-curl">
+          <button class="copy-code-btn" onclick="copyCode('code-curl')">Copy</button>
+<pre>curl -X POST <span class="api-url-placeholder"></span>/api/chat/v1 \
+  -H "Content-Type: application/json" \
+  -H "x-api-key: MALIYA-MD-YOUR_KEY_HERE" \
+  -d '{
+    "message":   "Hello!",
+    "sessionId": "user-123"
+  }'</pre>
+        </div>
+      </div>
+
+      <div id="tab-response" style="display:none;">
+        <div class="code-lang">Success Response</div>
+        <div class="code-block" id="code-response">
+          <button class="copy-code-btn" onclick="copyCode('code-response')">Copy</button>
+<pre>{
+  "ok":    true,
+  "reply": "Hello! I'm doing great, thank you for asking! 😊",
+  "model": "pollinations",
+  "lang":  "en"
+}</pre>
+        </div>
+        <div class="code-lang" style="margin-top:14px;">Error Responses</div>
+        <div class="code-block">
+<pre>{ "ok": false, "error": "x-api-key header required." }      // 401
+{ "ok": false, "error": "Invalid or inactive API key." }    // 403
+{ "ok": false, "error": "Rate limit — wait 2 s..." }        // 429
+{ "ok": false, "error": "message field required." }         // 400</pre>
+        </div>
+      </div>
+
+      <!-- Rate limits -->
+      <div style="margin-top:20px;padding:14px 18px;border-radius:11px;
+        background:rgba(0,180,255,0.05);border:1px solid var(--border);font-size:13px;">
+        <div style="font-weight:800;margin-bottom:6px;color:var(--accent);">
+          <i class="fa-solid fa-gauge-high"></i> Rate Limits
+        </div>
+        <div style="color:var(--sub);line-height:1.8;">
+          • Requests per session: <strong style="color:#fff;">2 second cooldown</strong><br>
+          • Max keys per account: <strong style="color:#fff;">5</strong><br>
+          • Message max length: <strong style="color:#fff;">1000 characters</strong><br>
+          • sessionId: optional — use same value to keep conversation context
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /main -->
+
+<!-- ══════════════════════════════════════════════════════════
+     MALIYA-MD Backend Config
+     Set BACKEND_URL to your Railway URL when deploying to Vercel:
+       window.BACKEND_URL = "https://maliya-md.up.railway.app";
+     Leave empty ("") when running frontend & backend together.
+════════════════════════════════════════════════════════════ -->
+<script>
+  window.BACKEND_URL = "https://railway-backend-production-2bbb.up.railway.app";   // ← paste your Railway URL here
+
+  // ── Patch native fetch: prepend BACKEND_URL + send cookies ──
+  (function () {
+    var _f = window.fetch.bind(window);
+    window.fetch = function (url, opts) {
+      if (typeof url === "string" && url.charAt(0) === "/" && window.BACKEND_URL)
+        url = window.BACKEND_URL + url;
+      opts = Object.assign({ credentials: "include" }, opts || {});
+      return _f(url, opts);
+    };
+  })();
+
+  // ── Patch <a href="/…"> links (logout, oauth, etc.) ──────
+  document.addEventListener("DOMContentLoaded", function () {
+    if (!window.BACKEND_URL) return;
+    document.querySelectorAll("a[href]").forEach(function (a) {
+      var h = a.getAttribute("href");
+      if (h && h.charAt(0) === "/" && h.charAt(1) !== "/")
+        a.href = window.BACKEND_URL + h;
+    });
+  });
+</script>
+
+<script>
+  // ── Fill API base URL ──────────────────────────────────────
+  const BASE = window.BACKEND_URL || window.location.origin;
+  document.querySelectorAll(".api-url-placeholder").forEach(el => el.textContent = BASE);
+  document.getElementById("apiEndpoint").textContent = BASE + "/api/chat/v1";
+
+  // ── Auth check ────────────────────────────────────────────
+  let _user = null;
+  (async function init() {
+    try {
+      const res  = await fetch("/auth/me", { credentials: "include" });
+      const data = await res.json();
+      if (!data.user) { showGate(); return; }
+      _user = data.user;
+      showContent();
+    } catch { showGate(); }
+  })();
+
+  function showGate()    { document.getElementById("loginGate").style.display = "block"; }
+  function showContent() {
+    document.getElementById("loginGate").style.display = "none";
+    document.getElementById("content").style.display   = "block";
+
+    // Fill user bar
+    const av = document.getElementById("userAvatarWrap");
+    if (_user.photo) {
+      av.innerHTML = `<img src="${_user.photo}" class="user-avatar" referrerpolicy="no-referrer" alt="">`;
+    } else {
+      av.innerHTML = `<div class="user-avatar-placeholder">${(_user.name||"U")[0].toUpperCase()}</div>`;
+    }
+    document.getElementById("userName").textContent  = _user.name  || "";
+    document.getElementById("userEmail").textContent = _user.email || "";
+
+    loadKeys();
+  }
+
+  // ── Key List ──────────────────────────────────────────────
+  async function loadKeys() {
+    try {
+      const res  = await fetch("/api-keys/list", { credentials: "include" });
+      const data = await res.json();
+      if (!data.ok) return;
+      renderKeys(data.keys);
+    } catch { /* silent */ }
+  }
+
+  function renderKeys(keys) {
+    const list = document.getElementById("keyList");
+    if (!keys || !keys.length) {
+      list.innerHTML = `<div class="empty-state">
+        <i class="fa-solid fa-key"></i>
+        API keys නැහැ. ඉහළ Generate click කරන්න.
+      </div>`;
+      return;
+    }
+    list.innerHTML = keys.map(k => `
+      <div class="key-item" id="ki-${k._id}">
+        <div style="flex:1;min-width:0;">
+          <div class="key-label">${escHtml(k.label)}</div>
+          <div class="key-value" onclick="copyText('${escAttr(k.keyFull)}', this)" title="Click to copy">
+            ${escHtml(k.keyFull)}
+          </div>
+          <div class="key-meta">
+            Created: ${new Date(k.createdAt).toLocaleDateString()}
+            &nbsp;•&nbsp; Usage: ${k.usageCount} calls
+            ${k.lastUsedAt ? `&nbsp;•&nbsp; Last: ${new Date(k.lastUsedAt).toLocaleDateString()}` : ""}
+          </div>
+        </div>
+        <div class="key-actions">
+          <button class="btn-copy" onclick="copyText('${escAttr(k.keyFull)}', this)">
+            <i class="fa-solid fa-copy"></i> Copy
+          </button>
+          <button class="btn-revoke" onclick="revokeKey('${k._id}')">
+            <i class="fa-solid fa-trash"></i> Revoke
+          </button>
+        </div>
+      </div>
+    `).join("");
+  }
+
+  // ── Create Key ────────────────────────────────────────────
+  async function createKey() {
+    const label = document.getElementById("keyLabel").value.trim() || "My API Key";
+    const btn   = document.getElementById("createBtn");
+    const alertEl = document.getElementById("createAlert");
+
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Generating…';
+    alertEl.innerHTML = "";
+
+    try {
+      const res  = await fetch("/api-keys/create", {
+        method:  "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ label }),
+      });
+      const data = await res.json();
+      if (!data.ok) {
+        alertEl.innerHTML = `<div class="alert alert-err"><i class="fa-solid fa-circle-xmark"></i> ${escHtml(data.error)}</div>`;
+        return;
+      }
+      // Show new key
+      const reveal = document.getElementById("newKeyReveal");
+      document.getElementById("newKeyText").textContent = data.key;
+      reveal.style.display = "block";
+      reveal.scrollIntoView({ behavior: "smooth", block: "center" });
+
+      // Reset form
+      document.getElementById("keyLabel").value = "";
+      alertEl.innerHTML = `<div class="alert alert-ok"><i class="fa-solid fa-check-circle"></i> Key created! Copy it now — නැවත show නොවේ.</div>`;
+
+      // Reload list
+      loadKeys();
+    } catch {
+      alertEl.innerHTML = `<div class="alert alert-err">Network error. Try again.</div>`;
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = '<i class="fa-solid fa-key"></i> Generate Key';
+    }
+  }
+
+  // ── Revoke Key ────────────────────────────────────────────
+  async function revokeKey(id) {
+    if (!confirm("මේ API key revoke කරන්නද? This cannot be undone.")) return;
+    try {
+      const res  = await fetch(`/api-keys/${id}`, {
+        method: "DELETE", credentials: "include",
+      });
+      const data = await res.json();
+      const alertEl = document.getElementById("keyListAlert");
+      if (!data.ok) {
+        alertEl.innerHTML = `<div class="alert alert-err">${escHtml(data.error)}</div>`;
+        return;
+      }
+      alertEl.innerHTML = `<div class="alert alert-ok">Key revoked.</div>`;
+      setTimeout(() => alertEl.innerHTML = "", 3000);
+      loadKeys();
+    } catch {
+      document.getElementById("keyListAlert").innerHTML =
+        `<div class="alert alert-err">Network error.</div>`;
+    }
+  }
+
+  // ── Copy ─────────────────────────────────────────────────
+  function copyText(text, el) {
+    navigator.clipboard.writeText(text).then(() => {
+      const orig = el.textContent;
+      el.textContent = "✅ Copied!";
+      setTimeout(() => { if (el.textContent === "✅ Copied!") el.textContent = orig; }, 1500);
+    }).catch(() => {
+      const ta = document.createElement("textarea");
+      ta.value = text; document.body.appendChild(ta);
+      ta.select(); document.execCommand("copy"); document.body.removeChild(ta);
+    });
+  }
+
+  function copyCode(id) {
+    const el  = document.getElementById(id);
+    const pre = el.querySelector("pre");
+    copyText(pre ? pre.textContent : el.textContent, el.querySelector(".copy-code-btn"));
+  }
+
+  // ── Tabs ─────────────────────────────────────────────────
+  function showTab(name) {
+    ["js","python","curl","response"].forEach(t => {
+      document.getElementById("tab-" + t).style.display = t === name ? "block" : "none";
+    });
+    document.querySelectorAll("#docTabs .tab-btn").forEach((b, i) => {
+      b.classList.toggle("active", ["js","python","curl","response"][i] === name);
+    });
+  }
+
+  // ── Helpers ───────────────────────────────────────────────
+  function escHtml(s) {
+    return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+  }
+  function escAttr(s) {
+    return String(s||"").replace(/'/g,"&#39;").replace(/"/g,"&quot;");
+  }
+</script>
+</body>
+</html>
