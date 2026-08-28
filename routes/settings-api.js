@@ -207,7 +207,7 @@ function verifyToken(req, res, next) {
 // Heroku bot එකට HTTP request එකක් යවලා WhatsApp message send කරන්න
 async function sendWhatsAppMessage(sessionId, phone, code) {
   // Heroku bot URL (settings API endpoint)
-  const BOT_URL = process.env.BOT_URL || "https://your-heroku-bot.herokuapp.com";
+  const BOT_URL = process.env.BOT_URL || "https://maliya-md-production-bee1.up.railway.app";
   const BOT_API_KEY = process.env.BOT_API_KEY || "";
 
   try {
