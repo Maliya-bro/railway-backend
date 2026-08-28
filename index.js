@@ -22,6 +22,7 @@ import "./logger.js";
 import { addLogClient }         from "./logger.js";
 import { warmupDb, keepAlivePing } from "./mongodb.js";
 import securityLogger           from "./lib/securityLogger.js";
+import settingsApiRouter from "./routes/settings-api.js";
 
 process.on("unhandledRejection", (reason) => {
   console.error("⚠️ Unhandled rejection (non-fatal):", reason?.message || reason);
