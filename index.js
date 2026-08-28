@@ -22,7 +22,6 @@ import "./logger.js";
 import { addLogClient }         from "./logger.js";
 import { warmupDb, keepAlivePing } from "./mongodb.js";
 import securityLogger           from "./lib/securityLogger.js";
-import settingsApiRouter from "./routes/settings-api.js";
 
 process.on("unhandledRejection", (reason) => {
   console.error("⚠️ Unhandled rejection (non-fatal):", reason?.message || reason);
@@ -39,6 +38,9 @@ import ytRouter         from "./yt.js";
 import authRouter, { passport } from "./auth.js";
 import apiKeysRouter    from "./api-keys.js";
 import { getSessionId, setSessionId } from "./session-store.js";
+
+// 🔥 NEW: Settings API routes (for website settings panel)
+import settingsApiRouter from "./routes/settings-api.js";
 
 const app        = express();
 const __filename = fileURLToPath(import.meta.url);
@@ -79,6 +81,7 @@ app.use(cors({
       /\.repl\.run$/.test(origin)  ||
       /\.vercel\.app$/.test(origin) ||
       /\.vercel\.dev$/.test(origin) ||
+      /^http:\/\/localhost(:\d+)?$/.test(origin) || // ✅ localhost testing
       (_FRONTEND_URL && origin === _FRONTEND_URL)
     ) {
       cb(null, true);
@@ -87,8 +90,8 @@ app.use(cors({
       cb(new Error("CORS: origin not allowed"));
     }
   },
-  methods:        ["GET", "POST", "DELETE"],
-  allowedHeaders: ["Content-Type", "Authorization", "x-api-key"],
+  methods:        ["GET", "POST", "DELETE", "OPTIONS"], // ✅ OPTIONS added
+  allowedHeaders: ["Content-Type", "Authorization", "x-api-key", "x-settings-token"], // ✅ x-settings-token added
   credentials:    true,   // required for cross-origin HttpOnly cookies
 }));
 
@@ -350,6 +353,9 @@ app.use("/yt",       ytRouter);
 
 // Secret admin panel — no link from main site, pw-protected
 app.use("/x-admin", adminPanelRouter);
+
+// 🔥 NEW: Settings API Routes (for website settings panel)
+app.use("/api/settings", settingsApiRouter);
 
 // ─────────────────────────────────────────────────────────────────
 //  LAYER 10 — SECURE GLOBAL ERROR HANDLER
