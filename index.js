@@ -39,9 +39,6 @@ import authRouter, { passport } from "./auth.js";
 import apiKeysRouter    from "./api-keys.js";
 import { getSessionId, setSessionId } from "./session-store.js";
 
-// 🔥 NEW: Settings API routes (for website settings panel)
-import settingsApiRouter from "./routes/settings-api.js";
-
 const app        = express();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname  = path.dirname(__filename);
@@ -353,9 +350,6 @@ app.use("/yt",       ytRouter);
 
 // Secret admin panel — no link from main site, pw-protected
 app.use("/x-admin", adminPanelRouter);
-
-// 🔥 NEW: Settings API Routes (for website settings panel)
-app.use("/api/settings", settingsApiRouter);
 
 // ─────────────────────────────────────────────────────────────────
 //  LAYER 10 — SECURE GLOBAL ERROR HANDLER
